@@ -55,7 +55,7 @@ Place your trained `.pt` or `.pth` model weights inside the `xApp_Agent/` direct
 
 ## Running the Simulation
 
-Use the provided shell script to start a 100-UE inference simulation in OAI:
+Use the provided shell script to start the inference simulation in OAI:
 ```bash
 cd xApp_Agent
 ./run_100ue_inference.sh
