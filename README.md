@@ -1,8 +1,8 @@
 # Power Allocation O-RAN xApp (DRL-based)
 
-This repository contains a Deep Reinforcement Learning (DRL) based xApp designed to perform dynamic Frequency Domain Power Allocation (FDPA) and resource scheduling within the OpenAirInterface (OAI) 5G framework. 
+This repository contains a Deep Reinforcement Learning (DRL) based xApp designed to perform distortion-aware power control within the OpenAirInterface (OAI) 5G framework. 
 
-The xApp acts as an external intelligent agent that dynamically adjusts per-UE transmit power and MCS (Modulation and Coding Scheme) based on real-time channel state telemetry, operating via a custom E2 Service Model integrated with FlexRIC.
+The xApp acts as an external intelligent agent that dynamically adjusts per-PRB transmit power based on real-time channel state telemetry, operating via a custom E2 Service Model integrated with FlexRIC.
 
 ## Repository Structure
 
