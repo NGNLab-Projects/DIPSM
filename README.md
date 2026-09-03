@@ -10,7 +10,7 @@ Because this project modifies the core OAI MAC layer and the FlexRIC near-RT RIC
 
 *   **`xApp_Agent/`**: Contains the Python-based DRL agent, environment wrappers, telemetry collection scripts, and plotting utilities.
 *   **`fdpa_sm/`**: The custom Frequency Domain Power Allocation (FDPA) E2 Service Model (E2SM). Contains the C code for both the RIC and the gNB agent.
-*   **`custom_mac/`**: Modified OAI MAC layer files (C/C++) responsible for real-time inference, CQI UDP listening, and interacting with the `libtorch` backend.
+*   **`custom_mac/`**: Modified OAI MAC layer files (C/C++) responsible for real-time inference, CQI UDP listening, and interacting with the `libtorch` backend. Includes modified downlink scheduler files (`gNB_scheduler*.c`, `nr_mac_gNB.h`).
 *   **`configs/`**: Custom `.conf` configuration files for running the OAI RF Simulator with multiple UEs.
 *   **`patches/`**: Contains `my_full_diff.patch` for quickly applying all OAI core modifications at once.
 *   **`install_dependencies.sh`**: Helper script to download the required C++ PyTorch backend.
@@ -42,7 +42,17 @@ git apply /path/to/Power-Allocation_O-RAN_xApp/patches/my_full_diff.patch
 ```
 
 **Manual Copy:**
-Copy the files from `custom_mac/` into `/path/to/your/openairinterface5g/openair2/LAYER2/MAC/`.
+Copy the MAC inference and listener files:
+```bash
+cp custom_mac/torch_infer.* /path/to/your/openairinterface5g/openair2/LAYER2/MAC/
+cp custom_mac/cqi_udp_listener.* /path/to/your/openairinterface5g/openair2/LAYER2/MAC/
+```
+
+Copy the modified downlink scheduler files:
+```bash
+cp custom_mac/gNB_scheduler* /path/to/your/openairinterface5g/openair2/LAYER2/NR_MAC_gNB/
+cp custom_mac/nr_mac_gNB.h /path/to/your/openairinterface5g/openair2/LAYER2/NR_MAC_gNB/
+```
 
 ### 2. Install the Custom FDPA Service Model
 The custom E2 Service Model must be compiled into FlexRIC.
