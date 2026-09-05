@@ -62,7 +62,8 @@ The custom E2 Service Model must be compiled into FlexRIC.
 3. Re-compile FlexRIC following the official Mosaic5G build instructions.
 
 ### 3. Pre-trained Weights
-Place your trained `.pt` or `.pth` model weights inside the `xApp_Agent/` directory before running inference. *(Note: Pre-trained weights are ignored by Git due to file size restrictions. Download them from the designated cloud storage link if provided).*
+The trained model weights are available in `xApp_Agent/` directory as A1_D_SM_Ppa_ckpt.pth.
+The model may be replaced by any other pre-trained model by renaming the model path in run_100ue_inference.sh.
 
 ## Running the Simulation
 
