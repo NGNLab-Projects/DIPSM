@@ -63,7 +63,7 @@ The custom E2 Service Model must be compiled into FlexRIC.
 
 ### 3. Pre-trained Weights
 The trained model weights are available in `xApp_Agent/` directory as A1_D_SM_Ppa_ckpt.pth.
-The model may be replaced by any other pre-trained model by renaming the model path in run_100ue_inference.sh.
+The model may be replaced by any other pre-trained model by renaming the model path in xApp_Agent/convert_model.py.
 
 ## Running the Simulation
 
