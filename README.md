@@ -57,9 +57,11 @@ cp custom_mac/nr_mac_gNB.h /path/to/your/openairinterface5g/openair2/LAYER2/NR_M
 
 ### 2. Install the Custom FDPA Service Model
 The custom E2 Service Model must be compiled into FlexRIC.
-1. Copy the contents of `fdpa_sm/src/` to your FlexRIC source folder: `flexric/src/sm/fdpa_sm/`
-2. Copy the contents of `fdpa_sm/test/` to your FlexRIC test folder: `flexric/test/sm/fdpa_sm/`
-3. Re-compile FlexRIC following the official Mosaic5G build instructions.
+1. Copy `fdpa_sm` directory to your FlexRIC source folder: `flexric/src/sm/`
+```bash
+cp fdpa_sm /path/to/your/openairinterface5g/openair2/E2AP/FlexRIC/src/sm/
+```
+2. Re-compile FlexRIC following the official Mosaic5G build instructions.
 
 ### 3. Pre-trained Weights
 The trained model weights are available in `xApp_Agent/` directory as A1_D_SM_Ppa_ckpt.pth.
