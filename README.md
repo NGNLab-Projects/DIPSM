@@ -19,7 +19,8 @@ Because this project modifies the core OAI MAC layer and the FlexRIC near-RT RIC
 
 1.  **Ubuntu 22.04 LTS**
 3.  **[OpenAirInterface5g](https://gitlab.eurecom.fr/oai/openairinterface5g)**: Clone and build the official OAI `develop` branch.
-4.  **LibTorch**: The OAI MAC layer requires `libtorch` to run the ONNX/PyTorch models natively in C++.
+4.  **[FlexRIC](https://gitlab.eurecom.fr/mosaic5g/flexric)**: Clone and build the official FlexRIC `develop` branch.
+5.  **LibTorch**: The OAI MAC layer requires `libtorch` to run the ONNX/PyTorch models natively in C++.
 
 ### Installing LibTorch
 The heavy `libtorch` binary is not included. Instead. Run the provided script inside your OAI directory:
