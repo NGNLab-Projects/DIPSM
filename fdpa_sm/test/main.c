@@ -20,9 +20,10 @@
  */
 
 
-#include "../../rnd/fill_rnd_data_fdpa.h"
-#include "../../../src/sm/fdpa_sm/fdpa_sm_agent.h"
-#include "../../../src/sm/fdpa_sm/fdpa_sm_ric.h"
+
+#include "../../../../test/common/fill_ind_data.h"
+#include "../../fdpa_sm/fdpa_sm_agent.h"
+#include "../../fdpa_sm/fdpa_sm_ric.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -38,31 +39,23 @@ fdpa_ind_data_t cp;
 ////
 
 static
-bool read_ind_fdpa(void* read)
+
+void read_RAN(sm_ag_if_rd_t* read)
 {
   assert(read != NULL);
-//  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
-//  assert(read->ind.type == FDPA_STATS_V0);
+  assert(read->type == FDPA_STATS_V0);
 
-  fdpa_ind_data_t* ind = (fdpa_ind_data_t*)read; // &read->ind.fdpa;
-
-  fill_fdpa_ind_data(ind);
-  cp.hdr = cp_fdpa_ind_hdr(&ind->hdr);
-  cp.msg = cp_fdpa_ind_msg(&ind->msg);
-  return true;
+  fill_fdpa_ind_data(&read->fdpa_stats);
+  cp.hdr = cp_fdpa_ind_hdr(&read->fdpa_stats.hdr);
+  cp.msg = cp_fdpa_ind_msg(&read->fdpa_stats.msg);
 }
 
-
 static 
-sm_ag_if_ans_t write_ctrl(void const* data)
+sm_ag_if_ans_t write_RAN(const sm_ag_if_wr_t* data)
 {
   assert(data != NULL);
-
-  fdpa_ctrl_req_data_t* ctrl = (fdpa_ctrl_req_data_t*)data; 
-  assert(ctrl->hdr.dummy == 1);
-  assert(ctrl->msg.action == 42);
-
-  sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0 };
+  assert(0!=0 && "Not implemented");
+  sm_ag_if_ans_t ans = {0};
   return ans;
 }
 
@@ -76,7 +69,7 @@ void check_eq_ran_function(sm_agent_t const* ag, sm_ric_t const* ric)
 {
   assert(ag != NULL);
   assert(ric != NULL);
-  assert(ag->info.id() == ric->ran_func_id);
+  assert(ag->ran_func_id == ric->ran_func_id);
 }
 
 // RIC -> E2
@@ -85,13 +78,9 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
 {
   assert(ag != NULL);
   assert(ric != NULL);
-
-  char sub[] = "2_ms";
-  sm_subs_data_t data = ric->proc.on_subscription(ric, &sub);
-
-  sm_ag_if_ans_subs_t const subs = ag->proc.on_subscription(ag, &data); 
-  assert(subs.type == PERIODIC_SUBSCRIPTION_FLRC);
-  assert(subs.per.t.ms == 2);
+ 
+  sm_subs_data_t data = ric->proc.on_subscription(ric, "2_ms");
+  ag->proc.on_subscription(ag, &data); 
 
   free_sm_subs_data(&data);
 }
@@ -103,12 +92,11 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  exp_ind_data_t exp = ag->proc.on_indication(ag, NULL);
-  assert(exp.has_value == true);
-  sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &exp.data);
+  sm_ind_data_t sm_data = ag->proc.on_indication(ag);
+  sm_ag_if_rd_t msg = ric->proc.on_indication(ric, &sm_data);
 
   assert(msg.type == FDPA_STATS_V0);
-  fdpa_ind_data_t* data = &msg.fdpa;
+  fdpa_ind_data_t* data = &msg.fdpa_stats;
 
   assert(eq_fdpa_ind_hdr(&data->hdr, &cp.hdr) == true);
   assert(eq_fdpa_ind_msg(&data->msg, &cp.msg) == true);
@@ -117,39 +105,18 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   free_fdpa_ind_hdr(&data->hdr);
   free_fdpa_ind_msg(&data->msg);
 
-  free_exp_ind_data(&exp); 
-}
-
-
-// RIC -> E2
-static
-void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
-{
-  assert(ag != NULL);
-  assert(ric != NULL);
-
-  fdpa_ctrl_req_data_t ctrl = {.hdr.dummy = 1, .msg.action = 42}; 
-  sm_ctrl_req_data_t msg = ric->proc.on_control_req(ric, &ctrl);
-  
-  sm_ctrl_out_data_t out = ag->proc.on_control(ag, &msg);
-  assert(out.len_out == 0 && out.ctrl_out == NULL );
-
-  free_sm_ctrl_req_data(&msg);
+  free_sm_ind_data(&sm_data); 
 }
 
 int main()
 {
-  sm_io_ag_ran_t io_ag = {0};
-  io_ag.read_ind_tbl[FDPA_STATS_V0] = read_ind_fdpa; 
-  io_ag.write_ctrl_tbl[FDPA_CTRL_REQ_V0] = write_ctrl; 
-
+  sm_io_ag_t io_ag = {.read = read_RAN, .write = write_RAN};  
   sm_agent_t* sm_ag = make_fdpa_sm_agent(io_ag);
   sm_ric_t* sm_ric = make_fdpa_sm_ric();
 
   check_eq_ran_function(sm_ag, sm_ric);
   check_subscription(sm_ag, sm_ric);
   check_indication(sm_ag, sm_ric);
-  check_ctrl(sm_ag, sm_ric);
 
   sm_ag->free_sm(sm_ag);
   sm_ric->free_sm(sm_ric);
